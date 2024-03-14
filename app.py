@@ -7,24 +7,24 @@ from langchain_community.llms import Ollama
 def getLLamaresponse(input_text,tool):
 
     ### LLama2 model
-    # Ollama.set_api_key("1234567890")
-    # Ollama.set_api_secret("<KEY>")
-    # Ollama.set_api_version("v1")
-    # Ollama.set_api_server("http://127.0.0.1:11434")
-    # llm = Ollama(model="llama2")
-    llm = Ollama(model="llama2", base_url="http://127.0.0.1:11434")
-    response=llm.invoke("Tell me a joke")
+    llm = Ollama(model="mistral:7b-instruct", base_url="http://127.0.0.1:11434")
     
     ## Prompt Template
-
-    template="""
-        Write a code for {tool} job profile for a requirement of {input_text}
-        just give code sample to extract informatio.
-            """
+    
+    template="""Provide only code for {tool} with requirement as {input_text} as output without any description.
+Provide only code in  Markdown code formatting.
+Do not include symbols such as ``` or ```python.
+If there is a lack of details, provide most logical solution.
+You are not allowed to ask for more details and do not provide additional details.
+"""
     
     prompt=PromptTemplate(input_variables=["code","tool","input_text"],
                           template=template)
     
+    
+    
+    # response=llm.invoke("Tell me a joke")
+    response=llm.invoke(prompt.format(tool=tool,input_text=input_text))
 
     print(response)
     return response
